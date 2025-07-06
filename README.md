@@ -61,12 +61,13 @@ Make sure Python 3 is installed:
 ```bash
 python --version
 
-2. Clone or Download the Code
+---
+### 2. Clone or Download the Code
 git clone <your-repo-url>
 cd SimpleFlaskBlog
-
-3. Install the Dependencies
+---
+### 3. Install the Dependencies
 pip install flask
 
-4. Run the app
+### 4. Run the app
 python app.py
