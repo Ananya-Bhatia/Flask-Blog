@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ username }}'s Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        {# Flash messages display #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {# User Authentication Links #}
+        <div class="auth-links">
+            {% if g.user %}
+                <span>Hello, <strong>{{ g.user[1] }}</strong>!</span>
+                <a href="{{ url_for('logout') }}" class="button">Logout</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="button">Register</a>
+                <a href="{{ url_for('login') }}" class="button">Login</a>
+            {% endif %}
+        </div>
+        <hr class="auth-hr">
+
+        <h1>Posts by {{ username }}</h1>
+        <p style="text-align: center;">All posts published by {{ username }}.</p>
+
+        {% if g.user %}
+            <a class="create-link" href="/new">➕ Create New Post</a>
+        {% endif %}
+        <hr>
+
+        {% for post in posts %}
+            <div class="post">
+                <h2><a href="/post/{{ post[0] }}">{{ post[1] }}</a></h2>
+                <p>{{ post[2] }}</p>
+                <p class="text-muted">
+                    Posted on: {{ post[3] }}
+                    {% if post[3] != post[4] %}
+                        (Last updated: {{ post[4] }})
+                    {% endif %}
+                </p>
+                {# Show edit/delete links only if current user is the author #}
+                {% if g.user and g.user[0] == post[6] %}
+                    <a href="/post/edit/{{ post[0] }}" class="btn-edit">Edit Post</a>
+                    <a href="/post/delete/{{ post[0] }}" class="btn-delete" onclick="return confirm('Are you sure you want to delete this post and all its comments?');">Delete Post</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="no-posts-message">{{ username }} hasn't published any posts yet.</p>
+        {% endfor %}
+
+        {# Pagination Controls - Modified to include user_id for the user profile page #}
+        <div class="pagination-controls">
+            {# Previous Page Link #}
+            {% if page > 1 %}
+                <a href="{{ url_for('user_posts', user_id=user_id, page=page-1) }}" class="pagination-link">&laquo; Previous</a>
+            {% else %}
+                <span class="pagination-link disabled">&laquo; Previous</span>
+            {% endif %}
+
+            {# Page Numbers #}
+            {% for p_num in range(1, total_pages + 1) %}
+                <a href="{{ url_for('user_posts', user_id=user_id, page=p_num) }}"
+                   class="pagination-link {% if p_num == page %}active{% endif %}">
+                    {{ p_num }}
+                </a>
+            {% endfor %}
+
+            {# Next Page Link #}
+            {% if page < total_pages %}
+                <a href="{{ url_for('user_posts', user_id=user_id, page=page+1) }}" class="pagination-link">Next &raquo;</a>
+            {% else %}
+                <span class="pagination-link disabled">Next &raquo;</span>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

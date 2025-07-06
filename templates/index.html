@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Blog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        {# Flash messages display #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {# User Authentication Links #}
+        <div class="auth-links">
+            {% if g.user %} {# g.user is set in app.py's @before_request #}
+                <span>Hello, <strong>{{ g.user[1] }}</strong>!</span> {# g.user[1] is the username #}
+                <a href="{{ url_for('logout') }}" class="button">Logout</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="button">Register</a>
+                <a href="{{ url_for('login') }}" class="button">Login</a>
+            {% endif %}
+        </div>
+        <hr class="auth-hr"> {# A small separator #}
+
+        <h1>Welcome to My Blog</h1>
+
+        {# Only show "Create New Post" if logged in #}
+        {% if g.user %}
+            <a class="create-link" href="/new">➕ Create New Post</a>
+        {% endif %}
+        <hr>
+
+        {% for post in posts %}
+            <div class="post">
+                <h2><a href="/post/{{ post[0] }}">{{ post[1] }}</a></h2>
+                <p>{{ post[2] }}</p>
+                <p class="text-muted">
+                    Posted by <a href="/user/{{ post[6] }}">{{ post[5] }}</a> {# post[5] is username, post[6] is user_id #}
+                    on: {{ post[3] }}
+                    {% if post[3] != post[4] %}
+                        (Last updated: {{ post[4] }})
+                    {% endif %}
+                </p>
+                {# Show edit/delete links only if current user is the author #}
+                {% if g.user and g.user[0] == post[6] %} {# g.user[0] is current user's ID, post[6] is author's ID #}
+                    <a href="/post/edit/{{ post[0] }}" class="btn-edit">Edit Post</a>
+                    <a href="/post/delete/{{ post[0] }}" class="btn-delete" onclick="return confirm('Are you sure you want to delete this post and all its comments?');">Delete Post</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="no-posts-message">No posts yet!</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

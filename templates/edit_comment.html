@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Comment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        {# Flash messages display #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for category, message in messages %}
+                        <li class="{{ category }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {# User Authentication Links (Optional, can be moved to a base.html later) #}
+        <div class="auth-links">
+            {% if g.user %}
+                <span>Hello, <strong>{{ g.user[1] }}</strong>!</span>
+                <a href="{{ url_for('logout') }}" class="button">Logout</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="button">Register</a>
+                <a href="{{ url_for('login') }}" class="button">Login</a>
+            {% endif %}
+        </div>
+        <hr class="auth-hr">
+
+        <h1>Edit Comment</h1>
+        <form action="" method="post">
+            <textarea name="comment" rows="5" required>{{ comment[2] }}</textarea><br>
+            <button type="submit">Update Comment</button>
+        </form>
+        <a href="/post/{{ comment[1] }}" class="back-link">Back to Post</a>
+    </div>
+</body>
+</html>
