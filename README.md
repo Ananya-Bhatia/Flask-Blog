@@ -60,14 +60,17 @@ Here’s what the blog can do right now:
 Make sure Python 3 is installed:
 ```bash
 python --version
-
----
+```
 ### 2. Clone or Download the Code
+```bash
 git clone <your-repo-url>
 cd SimpleFlaskBlog
----
+```
 ### 3. Install the Dependencies
+```bash
 pip install flask
-
+```
 ### 4. Run the app
+```bash
 python app.py
+```
